@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 class UserController extends Controller
 {
     /**
@@ -13,6 +15,7 @@ class UserController extends Controller
      */
     public function index()
     {
+      
        $users=User::all();
        return view('users.index',compact('users'));
     }
@@ -22,7 +25,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('users.create');
+        $roles=Role::get();
+        return view('users.create',compact('roles'));
     }
 
     /**
@@ -43,11 +47,12 @@ class UserController extends Controller
                 ->withInput();
         } else {
             try {
-                User::create([
+             $user=   User::create([
                     "name"=>$request->name,
                     "email"=>$request->email,
                     "password"=>Hash::make($request->password ) 
                 ]);
+                $user->syncRoles($request->roles);
                 return redirect()->route("users.index")->with('success','user created');
             } catch (\Exception $e) {
                 return $e->getMessage();
@@ -70,8 +75,9 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
+         $roles=Role::get();
         $user=User::find($id);
-        return view('users.edit', compact('user'));
+        return view('users.edit', compact('user','roles'));
     }
 
     /**
@@ -82,8 +88,6 @@ class UserController extends Controller
         $validator=Validator::make($request->all(),[
             'name'=>'required',
             'email'=>'required',
-            
-
         ]);
          if($validator->fails()) {
             return redirect()->route('users.create')
@@ -94,8 +98,10 @@ class UserController extends Controller
                 $update['name']=$request->name;
                  $update['email']=$request->email;
                   $update['password']=Hash::make($request->password ) ;
-                $query=User::where('id',$id)
+            User::where('id',$id)
                     ->update($update);
+                      $user=User::find($id);
+                 $user->syncRoles($request->roles);
                 return redirect()->route("users.index")->with('success','user updated');
             } catch (\Exception $e) {
                 return $e->getMessage();

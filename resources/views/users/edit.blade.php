@@ -32,7 +32,15 @@
                             <input type="password" name="password" id="disabledTextInput" class="form-control" placeholder="Password" value="">
                             
                         </div>
-
+                            <div class="mb-3">
+                            <label for="">Roles:</label>
+                            <select name="roles[]" id="" class="form-select" multiple >
+                                <option value="">Select Role</option>
+                                @foreach($roles as $role)
+                                <option value="{{$role->name}}" {{$user->hasRole($role->name)?"selected":""}}>{{$role->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>

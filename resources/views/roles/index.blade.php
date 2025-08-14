@@ -6,7 +6,7 @@
     <div class="row justify-content-center">
         <div class="col-md-10">
             <div class="card">
-                <div class="card-header">{{ __('Products') }}</div>
+                <div class="card-header">{{ __('Roles') }}</div>
 
                 <div class="card-body">
                     @session('success')
@@ -14,9 +14,7 @@
                         {{$value}}
                     </div>
                     @endsession
-                    @can('product-create')
-                    <a href="{{route('products.create')}}" class="btn btn-success mb-3">Create Product</a>
-                    @endcan
+                    <a href="{{route('roles.create')}}" class="btn btn-success mb-3">Create Roles</a>
                     <table class="table table-striped">
                         <thead>
                             <tr>
@@ -27,24 +25,18 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($products as $product)
+                            @foreach($roles as $role)
                             <tr>
-                                <td>{{$product->id}}</td>
-                                <td>{{$product->name}}</td>
+                                <td>{{$role->id}}</td>
+                                <td>{{$role->name}}</td>
 
                                 <td>
-                                    <form action="{{route('products.destroy',$product->id)}}" method="post">
+                                    <form action="{{route('roles.destroy',$role->id)}}" method="post">
                                         @csrf
                                         @method('DELETE')
-                                        @can('product-list')
-                                        <a href="{{route('products.show',$product->id)}}" class="btn btn-info btn-sm">Show</a>
-                                        @endcan
-                                        @can('product-edit')
-                                        <a href="{{route('products.edit',$product->id)}}" class="btn btn-primary btn-sm">Edit</a>
-                                        @endcan
-                                        @can('product-delete')
+                                        <a href="{{route('roles.show',$role->id)}}" class="btn btn-info btn-sm">Show</a>
+                                        <a href="{{route('roles.edit',$role->id)}}" class="btn btn-primary btn-sm">Edit</a>
                                         <button class="btn btn-danger btn-sm">DELETE</button>
-                                        @endcan
                                     </form>
                                 </td>
                             </tr>

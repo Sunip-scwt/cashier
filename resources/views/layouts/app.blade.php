@@ -51,6 +51,7 @@
                         </li>
                         @endif
                         @else
+                         <li class="nav-item"> <a href="{{route('roles.index')}}">Manage Roles </a></li>
                         <li class="nav-item"> <a href="{{route('users.index')}}">Manage Users </a></li>
                          <li class="nav-item"> <a href="{{route('products.index')}}">Manage Products </a></li>
                         <li class="nav-item dropdown">

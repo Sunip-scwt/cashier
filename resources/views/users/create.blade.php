@@ -34,7 +34,15 @@
                             <span class="text-danger">$message</span>
                             @enderror
                         </div>
-
+                        <div class="mb-3">
+                            <label for="">Roles:</label>
+                            <select name="roles[]" id="" class="form-select" multiple>
+                                <option value="">Select Role</option>
+                                @foreach($roles as $role)
+                                <option value="{{$role->name}}">{{$role->name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>

@@ -3,15 +3,26 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    public function __construct()
+    {
+        // examples:
+        $this->middleware(['permission:role-list | role-create | role-edit |role-delete'],["only"=>["index"]]);
+        $this->middleware(['permission:role-create'],["only"=>["create","store"]]);
+        
+    }
     public function index()
     {
-        //
+        $roles = Role::get();
+
+        return view('roles.index', compact('roles'));
     }
 
     /**
@@ -19,7 +30,9 @@ class RoleController extends Controller
      */
     public function create()
     {
-        //
+        $permissions = Permission::get();
+
+        return view('roles.create', compact('permissions'));
     }
 
     /**
@@ -27,7 +40,9 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $role = Role::create(["name" => $request->name]);
+        $role->syncPermissions([$request->permissions]);
+        return redirect()->route("roles.index")->with('success', 'role created');
     }
 
     /**
@@ -35,7 +50,9 @@ class RoleController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $role = Role::where('id', $id)
+            ->first();
+        return view('roles.show', compact('role'));
     }
 
     /**
@@ -43,7 +60,10 @@ class RoleController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $role = Role::where('id', $id)
+            ->first();
+        $permissions = Permission::get();
+        return view('roles.edit', compact('role', 'permissions'));
     }
 
     /**
@@ -51,7 +71,13 @@ class RoleController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $update['name'] = $request->name;
+        $role = Role::where('id', $id)
+            ->first();
+        $query = Role::where('id', $id)
+            ->update($update);
+        $role->syncPermissions([$request->permissions]);
+        return redirect()->route("roles.index")->with('success', 'role updated');
     }
 
     /**

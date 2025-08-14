@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
 
 class ProductController extends Controller
 {
@@ -12,8 +14,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $product=Product::get();
-         return view('users.index',compact('product'));
+        $products=Product::get();
+         return view('products.index',compact('products'));
     }
 
     /**
@@ -21,7 +23,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        return view('products.create');
     }
 
     /**
@@ -29,7 +31,27 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
+       
+        $validator=Validator::make($request->all(),[
+            'name'=>'required',
+          
+        ]);
+        if($validator->fails()) {
+            return redirect()->route('products.create')
+                ->withErrors($validator)
+                ->withInput();
+        } else {
+            try {
+                Product::create([
+                    "name"=>$request->name,
+                  
+                ]);
+                return redirect()->route("products.index")->with('success','product created');
+            } catch (\Exception $e) {
+                return $e->getMessage();
+            }
+        }
     }
 
     /**
@@ -45,15 +67,38 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
-        //
+
+        $product=Product::where('id',$id)
+            ->first();
+        
+         return view('products.edit', compact('product'));
     }
 
-    /**
-     * Update the specified resource in storage.
+/**
+ * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
     {
-        //
+        
+        $validator=Validator::make($request->all(),[
+            'name'=>'required',
+           
+        ]);
+         if($validator->fails()) {
+            return redirect()->route('users.create')
+                ->withErrors($validator)
+                ->withInput();
+        } else {
+            try {
+                $update['name']=$request->name;
+                
+                $query=Product::where('id',$id)
+                    ->update($update);
+                return redirect()->route("products.index")->with('success','product updated');
+            } catch (\Exception $e) {
+                return $e->getMessage();
+            }
+        }
     }
 
     /**
